@@ -25,7 +25,7 @@ public class GameResultsAnalyzer {
 
         logExceptions(failedGames);
 
-//        logTaskSuccessFailureRatiosByType(gameResults);
+//        logTaskSuccessFailureRatiosByProbabilityAndType(gameResults);
 
 //        logFailedTasksForGamesWithTheLowestScore(nrOfGames, finishedGames);
     }
@@ -45,19 +45,19 @@ public class GameResultsAnalyzer {
         LOG.info("Average score: {}", avgScore);
     }
 
-    private static void logTaskSuccessFailureRatiosByType(List<GameResult> gameResults) {
+    private static void logTaskSuccessFailureRatiosByProbabilityAndType(List<GameResult> gameResults) {
         Set<String> taskProbabilityTypes = new HashSet<>();
         Map<String, Integer> taskProbabilityTypeSolves = new HashMap<>();
         Map<String, Integer> taskProbabilityTypeFailures = new HashMap<>();
 
         for (GameResult gameResult : gameResults) {
             gameResult.succeededTasks().forEach(t -> {
-                String key = "%s-%s".format(t.probability(), t.firstMessageWord());
+                String key = "%s-%s".formatted(t.probability(), t.firstMessageWord());
                 taskProbabilityTypes.add(key);
                 taskProbabilityTypeSolves.compute(key, (k,v) -> v == null ? 1 : v + 1);
             });
             gameResult.failedTasks().forEach(t -> {
-                String key = "%s-%s".format(t.probability(), t.firstMessageWord());
+                String key = "%s-%s".formatted(t.probability(), t.firstMessageWord());
                 taskProbabilityTypes.add(key);
                 taskProbabilityTypeFailures.compute(key, (k,v) -> v == null ? 1 : v + 1);
             });

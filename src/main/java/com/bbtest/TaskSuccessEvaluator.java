@@ -9,7 +9,7 @@ public class TaskSuccessEvaluator {
     // Key format: {Task::probability}-{Task::firstMessageWord}
     private static final Map<String, Double> successFailureRatios;
     static {
-        // The content of this map is built using the output of
+        // The content of the map has been populated using the output of
         // GameResultsAnalyzer::logTaskSuccessFailureRatiosByType
         successFailureRatios = new HashMap<>();
         successFailureRatios.put("Sure thing-Help", 6838.00);
