@@ -11,10 +11,9 @@ import java.util.concurrent.Future;
 public class CallablesExecutor {
 
     public static <T> List<T> run(Collection<? extends Callable<T>> tasks, int parallelism) throws Exception {
-        List<Future<T>> resultFutures;
-        try (ExecutorService executorService = Executors.newFixedThreadPool(parallelism)) {
-            resultFutures = executorService.invokeAll(tasks);
-        }
+        ExecutorService executorService = Executors.newFixedThreadPool(parallelism);
+        List<Future<T>> resultFutures = executorService.invokeAll(tasks);
+        executorService.shutdown();
         List<T> results = new ArrayList<>(resultFutures.size());
         for (Future<T> resultFuture : resultFutures) {
             results.add(resultFuture.get());

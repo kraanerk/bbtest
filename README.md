@@ -1,7 +1,7 @@
 # bbtest
 
 Prerequisites:
-* JDK 21
+* JDK 17
 
 To run the application:
 * in Windows:  

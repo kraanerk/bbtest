@@ -33,8 +33,8 @@ public class GameResultsAnalyzer {
     private static void logGameStatistics(int nrOfGames, List<GameResult> finishedGames, List<GameResult> failedGames) {
         long countScoreBelow1000 = finishedGames.stream().filter(gr -> gr.score() < 1000).count();
 
-        int minScore = finishedGames.getFirst().score();
-        int maxScore = finishedGames.getLast().score();
+        int minScore = finishedGames.get(0).score();
+        int maxScore = finishedGames.get(finishedGames.size() - 1).score();
         int avgScore = finishedGames.stream().mapToInt(GameResult::score).sum() / finishedGames.size();
 
         LOG.info("Nr of games: {}", nrOfGames);
@@ -72,8 +72,9 @@ public class GameResultsAnalyzer {
 
         List<Map.Entry<String, Double>> ratiosList = new ArrayList<>(ratiosMap.entrySet());
         ratiosList.sort(Map.Entry.comparingByValue());
+        Collections.reverse(ratiosList);
         StringBuilder sb = new StringBuilder();
-        for (Map.Entry<String, Double> ratio: ratiosList.reversed()) {
+        for (Map.Entry<String, Double> ratio: ratiosList) {
             String key = ratio.getKey();
             Double value = ratio.getValue();
             sb.append("\nsuccessFailureRatios.put(\"%s\", %.2f);".formatted(key, value));

@@ -92,7 +92,7 @@ public class Game implements Callable<GameResult> {
         tasks.forEach(t -> LOG.debug("{}", t));
 
         if (tasks.isEmpty()) return null;
-        return tasks.getFirst();
+        return tasks.get(0);
     }
 
     void solve(Task task) {
@@ -112,10 +112,10 @@ public class Game implements Callable<GameResult> {
 
     void buyAnItemIfPossible() {
         Item item = availableItemsSortedByPriceAsc.isEmpty() ? null :
-                availableItemsSortedByPriceAsc.getFirst();
+                availableItemsSortedByPriceAsc.get(0);
         if (lives > 0 && item != null && gold >= item.cost()) {
             BuyItemResult result = gameController.buyItem(gameId, item.id());
-            availableItemsSortedByPriceAsc.removeFirst();
+            availableItemsSortedByPriceAsc.remove(0);
             lives = result.lives();
             gold = result.gold();
             turn = result.turn();
