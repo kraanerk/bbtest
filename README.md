@@ -1,4 +1,4 @@
-# bbtest
+# Bigbank test assignment
 
 Prerequisites:
 * JDK 17
@@ -6,18 +6,18 @@ Prerequisites:
 To run the application:
 * in Windows:  
   ```console
-  > .\gradlew.bat bootRun
+  .\gradlew.bat bootRun
   ```
 * in Mac/Linux: 
   ```console
-  $ ./gradlew bootRun
+  ./gradlew bootRun
   ```
 
 Supported application arguments (optional):
 * 'nrOfGamesToRun', default value is 1
 * 'nrOfGamesToRunInParallel', default value is 1
 
-Example: 
+Example:
 ```console
-$ ./gradlew bootRun --args='--nrOfGamesToRun=100 --nrOfGamesToRunInParallel=10'
+./gradlew bootRun --args='--nrOfGamesToRun=100 --nrOfGamesToRunInParallel=10'
 ```
