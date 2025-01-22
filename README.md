@@ -14,8 +14,12 @@ To run the application:
   ```
 
 Supported application arguments (optional):
-* 'nrOfGamesToRun', default value is 1
-* 'nrOfGamesToRunInParallel', default value is 1
+* 'nrOfGamesToRun'
+  * Default value is 1
+  * Valid value is at least 0
+* 'nrOfGamesToRunInParallel'
+  * Default value is 1
+  * Valid value is at least 1
 
 Example:
 ```console

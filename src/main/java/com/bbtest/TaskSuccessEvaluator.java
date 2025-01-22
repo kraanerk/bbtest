@@ -92,8 +92,10 @@ public class TaskSuccessEvaluator {
 
     public static Double estimateSuccess(Task task) {
         String action = task.firstMessageWord();
-        if (action.equals("Steal") || action.equals("Kill")) return 0d;
-        String key = task.probability() + "-" + action;
+        if (action.equals("Steal") || action.equals("Kill")) {
+            return 0d; // Prefer not to steal or kill
+        }
+        String key = "%s-%s".formatted(task.probability(), action);
         return successFailureRatios.getOrDefault(key, 0d);
     }
 }

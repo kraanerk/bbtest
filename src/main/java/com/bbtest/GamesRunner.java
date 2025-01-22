@@ -1,5 +1,6 @@
 package com.bbtest;
 
+import com.bbtest.exceptions.InvalidApplicationArgument;
 import com.bbtest.records.GameResult;
 import com.bbtest.utils.CallablesExecutor;
 import com.bbtest.utils.GameResultsAnalyzer;
@@ -20,6 +21,9 @@ public class GamesRunner implements CommandLineRunner {
 
     private static final Logger LOG = LoggerFactory.getLogger(GamesRunner.class);
 
+    static final String NR_OF_GAMES_AT_LEAST_ZERO = "Application argument 'nrOfGamesToRun' must be at least 0";
+    static final String PARALLELISM_AT_LEAST_ONE = "Application argument 'nrOfGamesToRunInParallel' must be at least 1";
+
     @Autowired
     private GameController gameController;
 
@@ -31,10 +35,22 @@ public class GamesRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+        runGames(nrOfGamesToRun, nrOfGamesToRunInParallel);
+    }
+
+    List<GameResult> runGames(int nrOfGamesToRun, int nrOfGamesToRunInParallel) throws Exception {
+        if (nrOfGamesToRun < 0) {
+            throw new InvalidApplicationArgument(NR_OF_GAMES_AT_LEAST_ZERO);
+        }
+        if (nrOfGamesToRunInParallel < 1) {
+            throw new InvalidApplicationArgument(PARALLELISM_AT_LEAST_ONE);
+        }
+
         LOG.info("Games to run: {}, parallelism: {}", nrOfGamesToRun, nrOfGamesToRunInParallel);
         List<Game> games = IntStream.range(0, nrOfGamesToRun).mapToObj(i -> new Game(gameController)).toList();
         List<GameResult> gameResults = CallablesExecutor.run(games, nrOfGamesToRunInParallel);
         GameResultsAnalyzer.analyze(gameResults);
+        return gameResults;
     }
 
 }

@@ -1,6 +1,8 @@
 package com.bbtest;
 
+import com.bbtest.exceptions.AllTasksUseUnknownEncryptionException;
 import com.bbtest.exceptions.GameOverException;
+import com.bbtest.exceptions.NoTasksAvailableException;
 import com.bbtest.records.*;
 import com.bbtest.utils.Decoder;
 import org.slf4j.Logger;
@@ -54,16 +56,17 @@ public class Game implements Callable<GameResult> {
 
     @Override
     public GameResult call() {
+        return playGame();
+    }
+
+    GameResult playGame() {
         GameResult result;
         try {
             startGame();
             loadAvailableItems();
 
-            while (lives > 0 ) {
+            while (lives > 0) {
                 Task task = pickNextTask();
-                if (task == null) {
-                    break; // all available tasks use unknown encryption :(
-                }
                 solve(task);
 
                 Item item = pickAnItemForPurchase();
@@ -72,14 +75,18 @@ public class Game implements Callable<GameResult> {
                 }
             }
 
-            result = new GameResult(GAME_NR.incrementAndGet(), gameId, score, turn, failedTasks, succeededTasks, null);
+            result = buildGameResult(null);
         } catch (GameOverException goe) {
-            result = new GameResult(GAME_NR.incrementAndGet(), gameId, score, turn, failedTasks, succeededTasks, null);
+            result = buildGameResult(null);
         } catch (Throwable t) {
-            result = new GameResult(GAME_NR.incrementAndGet(), gameId, score, turn, failedTasks, succeededTasks, t);
+            result = buildGameResult(t);
         }
         LOG.info("{}", result);
         return result;
+    }
+
+    private GameResult buildGameResult(Throwable t) {
+        return new GameResult(GAME_NR.incrementAndGet(), gameId, score, turn, lives, gold, failedTasks, succeededTasks, t);
     }
 
     void updateGameStatus(int lives, int gold, int turn, int score) {
@@ -113,15 +120,24 @@ public class Game implements Callable<GameResult> {
     }
 
     Task pickNextTask() {
-        List<Task> tasks = new ArrayList<>(Arrays.stream(gameController.listTasks(gameId))
-                .map(Decoder::decryptIfPossible)
-                .filter(t -> t.encrypted() == null) // cannot solve tasks which we haven't decrypted
-                .toList());
+        Task[] tasks = gameController.listTasks(gameId);
+        if (tasks.length == 0) {
+            throw new NoTasksAvailableException();
+        }
 
-        sortTasks(tasks);
+        List<Task> decryptedTasks = new ArrayList<>(
+                Arrays.stream(tasks)
+                        .map(Decoder::decryptIfPossible)
+                        .filter(t -> t.encrypted() == null)
+                        .toList()
+        );
+        if (decryptedTasks.isEmpty()) {
+            throw new AllTasksUseUnknownEncryptionException(tasks);
+        }
 
-        if (tasks.isEmpty()) return null;
-        return tasks.get(0);
+        sortTasks(decryptedTasks);
+
+        return decryptedTasks.get(0);
     }
 
     void sortTasks(List<Task> tasks) {

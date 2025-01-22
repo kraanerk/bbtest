@@ -1,5 +1,8 @@
 package com.bbtest;
 
+import com.bbtest.exceptions.AllTasksUseUnknownEncryptionException;
+import com.bbtest.exceptions.GameOverException;
+import com.bbtest.exceptions.NoTasksAvailableException;
 import com.bbtest.records.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,9 +23,9 @@ import static org.mockito.Mockito.*;
 public class GameTests {
 
     @Mock
-    GameController gameController;
+    private GameController gameController;
 
-    Game game;
+    private Game game;
 
     @BeforeEach
     void init() {
@@ -174,9 +177,7 @@ public class GameTests {
         when(gameController.listTasks(game.getGameId()))
                 .thenReturn(new Task[]{});
 
-        Task task = game.pickNextTask();
-
-        assertNull(task);
+        assertThrows(NoTasksAvailableException.class, () -> game.pickNextTask());
     }
 
     @Test
@@ -188,9 +189,7 @@ public class GameTests {
         when(gameController.listTasks(game.getGameId()))
                 .thenReturn(tasks);
 
-        Task task = game.pickNextTask();
-
-        assertNull(task);
+        assertThrows(AllTasksUseUnknownEncryptionException.class, () -> game.pickNextTask());
     }
 
     @Test
@@ -258,6 +257,110 @@ public class GameTests {
         assertEquals(solveTaskResult.turn(), game.getTurn());
         assertEquals(solveTaskResult.score(), game.getScore());
         assertTrue(game.getFailedTasks().contains(task));
+    }
+
+    @Test
+    void playGame_startingWithZeroLives() {
+        StartGameResult startGameResult = new StartGameResult(
+                "gameId", 0, 0, 0, 0
+        );
+        when(gameController.startGame())
+                .thenReturn(startGameResult);
+        when(gameController.listItems(startGameResult.gameId()))
+                .thenReturn(new Item[] {
+                        new Item("hpot", HEALING_POTION, 50)
+                });
+
+        GameResult gameResult = game.playGame();
+
+        assertEquals(startGameResult.gameId(), gameResult.gameId());
+        assertEquals(startGameResult.lives(), gameResult.lives());
+        assertEquals(startGameResult.gold(), gameResult.gold());
+        assertEquals(startGameResult.score(), gameResult.score());
+        assertEquals(startGameResult.turn(), gameResult.turn());
+        assertNull(gameResult.exception());
+    }
+
+    @Test
+    void playGame_encounterNoTasksAvailableException() {
+        StartGameResult startGameResult = new StartGameResult(
+                "gameId", 1, 0, 0, 0
+        );
+        when(gameController.startGame())
+                .thenReturn(startGameResult);
+        when(gameController.listItems(startGameResult.gameId()))
+                .thenReturn(new Item[] {
+                        new Item("hpot", HEALING_POTION, 50)
+                });
+        when(gameController.listTasks(startGameResult.gameId()))
+                .thenReturn(new Task[]{});
+
+        GameResult gameResult = game.playGame();
+
+        assertEquals(startGameResult.gameId(), gameResult.gameId());
+        assertEquals(startGameResult.lives(), gameResult.lives());
+        assertEquals(startGameResult.gold(), gameResult.gold());
+        assertEquals(startGameResult.score(), gameResult.score());
+        assertEquals(startGameResult.turn(), gameResult.turn());
+        assertEquals(NoTasksAvailableException.class, gameResult.exception().getClass());
+    }
+
+    @Test
+    void playGame_encounterGameOverException() {
+        StartGameResult startGameResult = new StartGameResult(
+                "gameId", 1, 0, 0, 0
+        );
+        when(gameController.startGame())
+                .thenReturn(startGameResult);
+        when(gameController.listItems(startGameResult.gameId()))
+                .thenReturn(new Item[] {
+                        new Item("hpot", HEALING_POTION, 50)
+                });
+        when(gameController.listTasks(startGameResult.gameId()))
+                .thenThrow(new GameOverException());
+
+        GameResult gameResult = game.playGame();
+
+        assertEquals(startGameResult.gameId(), gameResult.gameId());
+        assertEquals(startGameResult.lives(), gameResult.lives());
+        assertEquals(startGameResult.gold(), gameResult.gold());
+        assertEquals(startGameResult.score(), gameResult.score());
+        assertEquals(startGameResult.turn(), gameResult.turn());
+        assertNull(gameResult.exception());
+    }
+
+    @Test
+    void playGame_solveTaskAndBuyItem() {
+        StartGameResult startGameResult = new StartGameResult(
+                "gameId", 1, 0, 0, 0
+        );
+        when(gameController.startGame())
+                .thenReturn(startGameResult);
+
+        Item item = new Item("hpot", HEALING_POTION, 50);
+        when(gameController.listItems(startGameResult.gameId()))
+                .thenReturn(new Item[] { item });
+
+        Task task = new Task("taskId", "Sure thing", 6, 9, "Help ...", null);
+        when(gameController.listTasks(startGameResult.gameId()))
+                .thenReturn(new Task[] { task });
+
+        SolveTaskResult solveTaskResult = new SolveTaskResult(true, 1, item.cost(), 20, 1);
+        when(gameController.solveTask(startGameResult.gameId(), task.adId()))
+                .thenReturn(solveTaskResult);
+
+        BuyItemResult buyItemResult = new BuyItemResult(false, 10, 0, 2);
+        when(gameController.buyItem(startGameResult.gameId(), item.id()))
+                .thenReturn(buyItemResult);
+
+        GameResult gameResult = game.playGame();
+
+        assertEquals(startGameResult.gameId(), gameResult.gameId());
+        assertEquals(buyItemResult.lives(), gameResult.lives());
+        assertEquals(buyItemResult.gold(), gameResult.gold());
+        assertEquals(solveTaskResult.score(), gameResult.score());
+        assertEquals(buyItemResult.turn(), gameResult.turn());
+        assertNull(gameResult.exception());
     }
 
 }

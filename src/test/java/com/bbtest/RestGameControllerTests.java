@@ -57,7 +57,7 @@ public class RestGameControllerTests {
     @Test
     void listItems_ok() {
         Item[] items = new Item[] {
-                new Item(itemId, "Great thing", 100)
+                new Item(itemId, "Great item", 100)
         };
         stubFor(get("/%s/shop".formatted(gameId))
                 .willReturn(jsonResponse(items, HttpStatus.OK.value())));
