@@ -23,5 +23,5 @@ Supported application arguments (optional):
 
 Example:
 ```console
-./gradlew bootRun --args='--nrOfGamesToRun=100 --nrOfGamesToRunInParallel=10'
+./gradlew bootRun --args='--nrOfGamesToRun=10 --nrOfGamesToRunInParallel=5'
 ```
