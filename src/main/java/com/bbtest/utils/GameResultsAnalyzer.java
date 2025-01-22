@@ -21,9 +21,9 @@ public class GameResultsAnalyzer {
                 new ArrayList<>(gameResults.stream().filter(gr -> gr.exception() == null).toList());
         finishedGames.sort(Comparator.comparing(GameResult::score));
 
-        logGameStatistics(nrOfGames, finishedGames, failedGames);
-
         logExceptions(failedGames);
+
+        logGameStatistics(nrOfGames, finishedGames, failedGames);
 
 //        logTaskSuccessFailureRatiosByProbabilityAndType(gameResults);
 
@@ -33,9 +33,12 @@ public class GameResultsAnalyzer {
     private static void logGameStatistics(int nrOfGames, List<GameResult> finishedGames, List<GameResult> failedGames) {
         long countScoreBelow1000 = finishedGames.stream().filter(gr -> gr.score() < 1000).count();
 
-        int minScore = finishedGames.get(0).score();
-        int maxScore = finishedGames.get(finishedGames.size() - 1).score();
-        int avgScore = finishedGames.stream().mapToInt(GameResult::score).sum() / finishedGames.size();
+        int minScore = finishedGames.isEmpty() ? 0 :
+                finishedGames.get(0).score();
+        int maxScore = finishedGames.isEmpty() ? 0 :
+                finishedGames.get(finishedGames.size() - 1).score();
+        int avgScore = finishedGames.isEmpty() ? 0 :
+                finishedGames.stream().mapToInt(GameResult::score).sum() / finishedGames.size();
 
         LOG.info("Nr of games: {}", nrOfGames);
         LOG.info("Nr of failed games: {}", failedGames.size());
