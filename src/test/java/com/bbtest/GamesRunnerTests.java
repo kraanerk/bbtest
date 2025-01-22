@@ -30,13 +30,13 @@ public class GamesRunnerTests {
     private GamesRunner gamesRunner;
 
     @Test
-    void runZeroGames() throws Exception {
+    void runGames_zeroGames() throws Exception {
         List<GameResult> gameResults = gamesRunner.runGames(0, 1);
         assertEquals(0, gameResults.size());
     }
 
     @Test
-    void runTwoGamesInParallel() throws Exception {
+    void runGames_twoGamesInParallel() throws Exception {
         StartGameResult startGameResult = new StartGameResult(
                 "gameId", 0, 0, 0, 0
         );
@@ -52,7 +52,7 @@ public class GamesRunnerTests {
     }
 
     @Test
-    void run_negativeNrOfGames() {
+    void runGames_negativeNrOfGames() {
         Throwable t = assertThrows(InvalidApplicationArgument.class,
                 () -> gamesRunner.runGames(-1, 1)
         );
@@ -60,7 +60,7 @@ public class GamesRunnerTests {
     }
 
     @Test
-    void run_zeroGamesInParallel() {
+    void runGames_zeroGamesInParallel() {
         Throwable t = assertThrows(InvalidApplicationArgument.class,
                 () -> gamesRunner.runGames(1, 0)
         );
