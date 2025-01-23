@@ -14,13 +14,15 @@ To run the application:
   ```
 
 Supported application arguments (optional):
-* 'nrOfGamesToRun'
-  * Default value is 1
-  * Valid value is at least 0
-* 'nrOfGamesToRunInParallel'
-  * Default value is 1
-  * Valid value is at least 1
-* Example, to run 10 games in total executing 5 games in parallel:
+* **nrOfGamesToRun**
+  * Defines a number of games to execute in total.
+  * Default value is 1.
+  * A valid value is an integer which is greater than or equal to 0.
+* **nrOfGamesToRunInParallel**
+  * Defines a number of games to be executed in parallel. 
+  * Default value is 1.
+  * A valid value is an integer greater than 0.
+* For example, to run 10 games in total executing 5 games in parallel, run the following command:
   ```console
   ./gradlew bootRun --args='--nrOfGamesToRun=10 --nrOfGamesToRunInParallel=5'
   ```
