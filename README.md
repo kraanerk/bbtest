@@ -17,7 +17,7 @@ Supported application arguments (optional):
 * **nrOfGamesToRun**
   * Defines a number of games to execute in total.
   * Default value is 1.
-  * A valid value is an integer which is greater than or equal to 0.
+  * A valid value is an integer greater than 0.
 * **nrOfGamesToRunInParallel**
   * Defines a number of games to be executed in parallel.
   * Default value is 1.
