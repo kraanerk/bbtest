@@ -12,7 +12,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
-import static com.bbtest.GamesRunner.NR_OF_GAMES_AT_LEAST_ZERO;
+import static com.bbtest.GamesRunner.NR_OF_GAMES_AT_LEAST_ONE;
 import static com.bbtest.GamesRunner.PARALLELISM_AT_LEAST_ONE;
 import static com.bbtest.records.Item.HEALING_POTION;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -28,12 +28,6 @@ public class GamesRunnerTests {
 
     @InjectMocks
     private GamesRunner gamesRunner;
-
-    @Test
-    void runGames_zeroGames() throws Exception {
-        List<GameResult> gameResults = gamesRunner.runGames(0, 1);
-        assertEquals(0, gameResults.size());
-    }
 
     @Test
     void runGames_twoGamesInParallel() throws Exception {
@@ -52,11 +46,11 @@ public class GamesRunnerTests {
     }
 
     @Test
-    void runGames_negativeNrOfGames() {
+    void runGames_zeroNrOfGames() {
         Throwable t = assertThrows(InvalidApplicationArgument.class,
-                () -> gamesRunner.runGames(-1, 1)
+                () -> gamesRunner.runGames(0, 1)
         );
-        assertEquals(NR_OF_GAMES_AT_LEAST_ZERO, t.getMessage());
+        assertEquals(NR_OF_GAMES_AT_LEAST_ONE, t.getMessage());
     }
 
     @Test

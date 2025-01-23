@@ -21,7 +21,7 @@ public class GamesRunner implements CommandLineRunner {
 
     private static final Logger LOG = LoggerFactory.getLogger(GamesRunner.class);
 
-    static final String NR_OF_GAMES_AT_LEAST_ZERO = "Application argument 'nrOfGamesToRun' must be at least 0";
+    static final String NR_OF_GAMES_AT_LEAST_ONE = "Application argument 'nrOfGamesToRun' must be at least 1";
     static final String PARALLELISM_AT_LEAST_ONE = "Application argument 'nrOfGamesToRunInParallel' must be at least 1";
 
     @Autowired
@@ -39,8 +39,8 @@ public class GamesRunner implements CommandLineRunner {
     }
 
     List<GameResult> runGames(int nrOfGamesToRun, int nrOfGamesToRunInParallel) throws Exception {
-        if (nrOfGamesToRun < 0) {
-            throw new InvalidApplicationArgument(NR_OF_GAMES_AT_LEAST_ZERO);
+        if (nrOfGamesToRun < 1) {
+            throw new InvalidApplicationArgument(NR_OF_GAMES_AT_LEAST_ONE);
         }
         if (nrOfGamesToRunInParallel < 1) {
             throw new InvalidApplicationArgument(PARALLELISM_AT_LEAST_ONE);
