@@ -81,8 +81,10 @@ public class Game implements Callable<GameResult> {
         } catch (Throwable t) {
             result = buildGameResult(t);
         }
-        LOG.info("Game #{} {}",
+
+        LOG.info("Game #{}, id: {}, {}",
                 result.gameNr(),
+                result.gameId(),
                 result.exception() == null ? "score: " + result.score() :
                         "exception: " + result.exception().getMessage());
         return result;
