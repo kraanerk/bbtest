@@ -1,14 +1,14 @@
-# Bigbank test assignment
+# Bigbank Test Task Solution
 
 Prerequisites:
 * JDK 17
 
 To run the application:
-* in Mac/Linux: 
+* in Mac/Linux, run the following command in a terminal window (in the **bbtest** directory):
   ```console
   ./gradlew bootRun
   ```
-* in Windows:
+* in Windows, run the following command in a terminal window (in the **bbtest** directory):
   ```console
   .\gradlew.bat bootRun
   ```
